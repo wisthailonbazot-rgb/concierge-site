@@ -137,11 +137,11 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden overflow-hidden bg-navy-900/98 backdrop-blur-lg border-t border-gold-500/10"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="md:hidden bg-navy-900/98 backdrop-blur-lg border-t border-gold-500/10"
           >
             <ul className="px-4 py-4 flex flex-col gap-1">
               {navLinks.map((link, i) => (
