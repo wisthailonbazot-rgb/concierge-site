@@ -20,17 +20,27 @@ export default function Hero() {
     const el = titleRef.current;
     if (!el) return;
     const text = el.getAttribute("data-text") || "";
+    let charIndex = 0;
+
+    // Wrap each WORD in inline-block to prevent mid-word line breaks,
+    // then animate each character inside.
     el.innerHTML = text
-      .split("")
-      .map((char, i) =>
-        char === " "
-          ? " "
-          : `<span class="inline-block opacity-0 translate-y-8 transition-all duration-500" style="transition-delay:${i * 30}ms">${char}</span>`
-      )
-      .join("");
+      .split(" ")
+      .map((word) => {
+        const chars = word
+          .split("")
+          .map((char) => {
+            const delay = charIndex * 30;
+            charIndex++;
+            return `<span class="char inline-block opacity-0 translate-y-8 transition-all duration-500" style="transition-delay:${delay}ms">${char}</span>`;
+          })
+          .join("");
+        return `<span class="inline-block">${chars}</span>`;
+      })
+      .join(" ");
 
     const timeout = setTimeout(() => {
-      el.querySelectorAll("span").forEach((span) => {
+      el.querySelectorAll(".char").forEach((span) => {
         span.classList.remove("opacity-0", "translate-y-8");
       });
     }, 200);
@@ -74,9 +84,9 @@ export default function Hero() {
         ))}
       </div>
 
-      {/* Decorative rings */}
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-gold-500/5 animate-spin-slow" />
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-gold-500/8" />
+      {/* Decorative rings — hidden on mobile to avoid visual clutter */}
+      <div className="pointer-events-none hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-gold-500/5 animate-spin-slow" />
+      <div className="pointer-events-none hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-gold-500/8" />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-20">
@@ -96,7 +106,7 @@ export default function Hero() {
           <h1
             ref={titleRef}
             data-text="SEGURANÇA E EXCELÊNCIA PARA SEU CONDOMÍNIO"
-            className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white leading-none tracking-wide mb-6"
+            className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-white leading-tight sm:leading-none tracking-wide mb-6"
           />
 
           {/* Subtitle */}
