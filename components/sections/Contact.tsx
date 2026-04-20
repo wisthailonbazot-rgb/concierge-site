@@ -5,7 +5,10 @@ import { motion, useInView } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Mail, Send, CheckCircle, Phone, Clock } from "lucide-react";
+import { Mail, CheckCircle, Phone, Clock, MessageCircle } from "lucide-react";
+
+// ← Substitua pelo número real (somente dígitos, com DDI 55, ex: "5511999998888")
+const WHATSAPP_NUMBER = "5500000000000";
 
 function InstagramIcon({ size = 18, className }: { size?: number; className?: string }) {
   return (
@@ -30,7 +33,6 @@ export default function Contact() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -39,25 +41,20 @@ export default function Contact() {
     reset,
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  const onSubmit = async (data: FormData) => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) {
-        setSubmitted(true);
-        reset();
-      }
-    } catch {
-      // fallback: show success anyway for demo
-      setSubmitted(true);
-      reset();
-    } finally {
-      setLoading(false);
-    }
+  const onSubmit = (data: FormData) => {
+    const message =
+`Olá! Vim pelo site da Concierge Brasil e gostaria de solicitar um orçamento.
+
+*Nome:* ${data.name}
+*Telefone:* ${data.phone}
+*Condomínio / Empresa:* ${data.condo}
+
+*Mensagem:* ${data.message}`;
+
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    setSubmitted(true);
+    reset();
   };
 
   const inputClass =
@@ -183,9 +180,9 @@ export default function Contact() {
                   <div className="w-20 h-20 bg-gold-500/10 border-2 border-gold-500/30 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircle size={40} className="text-gold-500" />
                   </div>
-                  <h3 className="font-display text-3xl text-white mb-3">MENSAGEM ENVIADA!</h3>
+                  <h3 className="font-display text-3xl text-white mb-3">WHATSAPP ABERTO!</h3>
                   <p className="text-white/60 mb-8">
-                    Recebemos sua solicitação. Nossa equipe entrará em contato em breve.
+                    Sua mensagem foi pré-preenchida no WhatsApp. É só enviar para falar com nossa equipe!
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
@@ -248,28 +245,18 @@ export default function Contact() {
 
                   <button
                     type="submit"
-                    disabled={loading}
-                    className="w-full btn-gold flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-full btn-gold flex items-center justify-center gap-2"
                   >
-                    {loading ? (
-                      <>
-                        <span className="w-4 h-4 border-2 border-navy-900/30 border-t-navy-900 rounded-full animate-spin" />
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        <Send size={18} />
-                        Solicitar Orçamento Gratuito
-                      </>
-                    )}
+                    <MessageCircle size={18} />
+                    Enviar pelo WhatsApp
                   </button>
 
                   <p className="text-white/30 text-xs text-center">
-                    Ao enviar, você concorda com nossa{" "}
+                    Ao enviar, o WhatsApp abrirá com sua mensagem pré-preenchida.{" "}
                     <a href="/privacidade" className="text-gold-500/70 hover:text-gold-500 underline">
                       Política de Privacidade
                     </a>
-                    . Seus dados estão seguros.
+                    .
                   </p>
                 </form>
               )}

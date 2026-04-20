@@ -101,7 +101,7 @@ export default function Services() {
                 initial={{ opacity: 0, y: 40 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className={`service-card group ${isLast ? "sm:col-start-1 lg:col-start-2" : ""}`}
+                className={`service-card group ${isLast ? "sm:col-span-2 sm:max-w-sm sm:w-full sm:mx-auto lg:max-w-none lg:col-span-1 lg:col-start-2" : ""}`}
               >
                 {/* Tag */}
                 <div className="inline-flex items-center text-gold-500/70 text-xs font-bold tracking-widest uppercase mb-6">

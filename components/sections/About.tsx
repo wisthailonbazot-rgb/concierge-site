@@ -44,7 +44,7 @@ export default function About() {
                 alt="Equipe Concierge Brasil"
                 width={700}
                 height={800}
-                className="w-full h-[500px] object-cover"
+                className="w-full h-[300px] sm:h-[420px] lg:h-[500px] object-cover"
               />
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-navy-900/60 via-transparent to-transparent" />
@@ -62,19 +62,19 @@ export default function About() {
               </div>
             </div>
 
-            {/* Floating card */}
+            {/* Floating card — hidden on xs, visible sm+ */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="absolute -top-6 -right-6 bg-navy-700 border border-gold-500/20 rounded-2xl p-5 shadow-gold w-48"
+              className="hidden sm:block absolute -top-6 -right-6 bg-navy-700 border border-gold-500/20 rounded-2xl p-5 shadow-gold w-48"
             >
               <div className="font-display text-4xl text-shimmer mb-1">+500</div>
               <div className="text-white/70 text-xs leading-tight">Contratos de serviço realizados</div>
             </motion.div>
 
-            {/* Gold border decoration */}
-            <div className="absolute -bottom-4 -left-4 w-3/4 h-3/4 border-2 border-gold-500/20 rounded-2xl -z-10" />
+            {/* Gold border decoration — hidden on xs */}
+            <div className="hidden sm:block absolute -bottom-4 -left-4 w-3/4 h-3/4 border-2 border-gold-500/20 rounded-2xl -z-10" />
           </motion.div>
 
           {/* Text column */}

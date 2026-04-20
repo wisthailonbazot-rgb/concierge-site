@@ -54,7 +54,7 @@ export default function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8 h-18 md:h-20 flex items-center justify-between">
+      <nav className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
         {/* Logo */}
         <button
           onClick={() => handleNav("#inicio")}

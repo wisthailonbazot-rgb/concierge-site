@@ -9,7 +9,7 @@ const galleryImages = [
   {
     src: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&h=400&fit=crop&q=80",
     alt: "Equipe profissional uniformizada",
-    span: "col-span-2",
+    span: "sm:col-span-2",
   },
   {
     src: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=600&h=400&fit=crop&q=80",
@@ -19,7 +19,7 @@ const galleryImages = [
   {
     src: "https://images.unsplash.com/photo-1562664377-709f2c337eb2?w=600&h=700&fit=crop&q=80",
     alt: "Portaria e recepção",
-    span: "row-span-2",
+    span: "sm:row-span-2",
   },
   {
     src: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=400&fit=crop&q=80",
