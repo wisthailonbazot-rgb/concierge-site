@@ -7,33 +7,33 @@ import { X, ZoomIn } from "lucide-react";
 
 const galleryImages = [
   {
-    src: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&h=400&fit=crop&q=80",
-    alt: "Equipe profissional uniformizada",
+    src: "/gallery/condo-aereo.jpeg",
+    alt: "Condomínio atendido pela Concierge Brasil",
     span: "sm:col-span-2",
   },
   {
-    src: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=600&h=400&fit=crop&q=80",
-    alt: "Serviço de limpeza profissional",
+    src: "/gallery/recepcao.png",
+    alt: "Recepção profissional",
     span: "",
   },
   {
-    src: "https://images.unsplash.com/photo-1562664377-709f2c337eb2?w=600&h=700&fit=crop&q=80",
-    alt: "Portaria e recepção",
+    src: "/gallery/vigia.png",
+    alt: "Portaria 24h",
     span: "sm:row-span-2",
   },
   {
-    src: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=400&fit=crop&q=80",
-    alt: "Limpeza de áreas comuns",
+    src: "/gallery/condo-predio.jpeg",
+    alt: "Gestão de condomínio",
     span: "",
   },
   {
-    src: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=600&h=400&fit=crop&q=80",
-    alt: "Manutenção de jardim",
+    src: "/gallery/jardinagem.png",
+    alt: "Jardinagem e conservação",
     span: "",
   },
   {
-    src: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&h=400&fit=crop&q=80",
-    alt: "Limpeza de piscina",
+    src: "/gallery/manutencao.png",
+    alt: "Zeladoria e manutenção",
     span: "",
   },
 ];
@@ -137,7 +137,7 @@ export default function Gallery() {
               onClick={(e) => e.stopPropagation()}
             >
               <Image
-                src={selected.src.replace("w=600", "w=1200")}
+                src={selected.src}
                 alt={selected.alt}
                 width={1200}
                 height={800}

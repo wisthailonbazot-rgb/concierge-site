@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone } from "lucide-react";
+import Image from "next/image";
 
 const navLinks = [
   { label: "Início", href: "#inicio" },
@@ -61,22 +62,14 @@ export default function Navbar() {
           className="flex items-center gap-3 group"
           aria-label="Concierge Brasil - Ir ao topo"
         >
-          <div className="relative w-10 h-10 flex-shrink-0">
-            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10">
-              <circle cx="20" cy="20" r="19" fill="white" stroke="#F5A800" strokeWidth="1.5"/>
-              <path
-                d="M20 8a12 12 0 100 24A12 12 0 0020 8zm0 2a10 10 0 110 20A10 10 0 0120 10z"
-                fill="#F5A800"
-                opacity="0.2"
-              />
-              <path
-                d="M20 6c-1.1 0-2 .9-2 2v1.1A8.9 8.9 0 0012.1 11L11 10.3c-.95-.55-2.17-.22-2.72.73l-2 3.46c-.55.95-.22 2.17.73 2.72l1.1.64A9 9 0 008 20c0 .7.08 1.38.2 2.04l-1.1.64c-.95.55-1.28 1.77-.73 2.72l2 3.46c.55.95 1.77 1.28 2.72.73l1.1-.64A8.9 8.9 0 0018 30.9V32c0 1.1.9 2 2 2s2-.9 2-2v-1.1a8.9 8.9 0 005.9-2.9l1.1.64c.95.55 2.17.22 2.72-.73l2-3.46c.55-.95.22-2.17-.73-2.72l-1.1-.64c.12-.66.2-1.34.2-2.04 0-.7-.08-1.38-.2-2.04l1.1-.64c.95-.55 1.28-1.77.73-2.72l-2-3.46c-.55-.95-1.77-1.28-2.72-.73l-1.1.64A8.9 8.9 0 0022 9.1V8c0-1.1-.9-2-2-2zm0 7a7 7 0 110 14A7 7 0 0120 13z"
-                fill="#F5A800"
-              />
-              <rect x="16" y="17" width="8" height="10" rx="1" fill="#0F1D5C"/>
-              <rect x="17.5" y="13" width="5" height="4" rx="0.5" fill="#0F1D5C"/>
-              <rect x="19" y="13" width="2" height="2" rx="0.5" fill="#F5A800"/>
-            </svg>
+          <div className="relative w-10 h-10 flex-shrink-0 rounded-full overflow-hidden">
+            <Image
+              src="/logo.jpeg"
+              alt="Concierge Brasil"
+              width={40}
+              height={40}
+              className="object-cover w-full h-full"
+            />
           </div>
           <div className="flex flex-col">
             <span className="font-display text-white text-xl leading-tight tracking-wide group-hover:text-gold-400 transition-colors">

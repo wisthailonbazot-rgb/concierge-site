@@ -1,4 +1,5 @@
 import { Mail, Phone } from "lucide-react";
+import Image from "next/image";
 
 function InstagramIcon({ size = 18, className }: { size?: number; className?: string }) {
   return (
@@ -45,13 +46,8 @@ export default function Footer() {
           <div className="lg:col-span-1">
             {/* Logo */}
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center flex-shrink-0">
-                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8">
-                  <path
-                    d="M20 6c-1.1 0-2 .9-2 2v1.1A8.9 8.9 0 0012.1 11L11 10.3c-.95-.55-2.17-.22-2.72.73l-2 3.46c-.55.95-.22 2.17.73 2.72l1.1.64A9 9 0 008 20c0 .7.08 1.38.2 2.04l-1.1.64c-.95.55-1.28 1.77-.73 2.72l2 3.46c.55.95 1.77 1.28 2.72.73l1.1-.64A8.9 8.9 0 0018 30.9V32c0 1.1.9 2 2 2s2-.9 2-2v-1.1a8.9 8.9 0 005.9-2.9l1.1.64c.95.55 2.17.22 2.72-.73l2-3.46c.55-.95.22-2.17-.73-2.72l-1.1-.64c.12-.66.2-1.34.2-2.04 0-.7-.08-1.38-.2-2.04l1.1-.64c.95-.55 1.28-1.77.73-2.72l-2-3.46c-.55-.95-1.77-1.28-2.72-.73l-1.1.64A8.9 8.9 0 0022 9.1V8c0-1.1-.9-2-2-2zm0 7a7 7 0 110 14A7 7 0 0120 13z"
-                    fill="#F5A800"
-                  />
-                </svg>
+              <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                <Image src="/logo.jpeg" alt="Concierge Brasil" width={40} height={40} className="object-cover w-full h-full" />
               </div>
               <div>
                 <div className="font-display text-white text-lg leading-tight">CONCIERGE BRASIL</div>
@@ -81,7 +77,7 @@ export default function Footer() {
                 <Mail size={18} />
               </a>
               <a
-                href="https://wa.me/5500000000000"
+                href="https://wa.me/556292440750"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-gold-500/10 hover:border-gold-500/30 hover:text-gold-500 transition-all"
@@ -144,10 +140,10 @@ export default function Footer() {
               <div className="flex items-start gap-3">
                 <Phone size={15} className="text-gold-500 mt-1 flex-shrink-0" />
                 <a
-                  href="https://wa.me/5500000000000"
+                  href="https://wa.me/556292440750"
                   className="text-white/50 text-sm hover:text-gold-500 transition-colors"
                 >
-                  (00) 00000-0000
+                  (62) 9244-0750
                 </a>
               </div>
               <div className="flex items-start gap-3">

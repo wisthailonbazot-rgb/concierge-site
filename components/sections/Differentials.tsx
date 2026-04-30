@@ -37,8 +37,8 @@ export default function Differentials() {
       {/* Background parallax image */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&h=900&fit=crop&q=80"
-          alt="Condomínio profissional"
+          src="/gallery/condo-predio.jpeg"
+          alt="Condomínio atendido pela Concierge Brasil"
           fill
           className="object-cover object-center"
           style={{ transform: "scale(1.1)" }}

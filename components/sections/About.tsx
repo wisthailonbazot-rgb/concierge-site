@@ -40,8 +40,8 @@ export default function About() {
           >
             <div className="relative rounded-2xl overflow-hidden shadow-premium">
               <Image
-                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=700&h=800&fit=crop&q=80"
-                alt="Equipe Concierge Brasil"
+                src="/gallery/condo-aereo.jpeg"
+                alt="Condomínio atendido pela Concierge Brasil"
                 width={700}
                 height={800}
                 className="w-full h-[300px] sm:h-[420px] lg:h-[500px] object-cover"
@@ -56,7 +56,7 @@ export default function About() {
                   </div>
                   <div>
                     <div className="text-white font-bold text-sm">Empresa de Confiança</div>
-                    <div className="text-white/60 text-xs">+10 anos no mercado</div>
+                    <div className="text-white/60 text-xs">+4 anos no mercado</div>
                   </div>
                 </div>
               </div>
@@ -69,7 +69,7 @@ export default function About() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="hidden sm:block absolute -top-6 -right-6 bg-navy-700 border border-gold-500/20 rounded-2xl p-5 shadow-gold w-48"
             >
-              <div className="font-display text-4xl text-shimmer mb-1">+500</div>
+              <div className="font-display text-4xl text-shimmer mb-1">+50</div>
               <div className="text-white/70 text-xs leading-tight">Contratos de serviço realizados</div>
             </motion.div>
 

@@ -50,7 +50,7 @@ export default function WhatsAppButton() {
 
           {/* Button */}
           <a
-            href="https://wa.me/5500000000000?text=Olá! Gostaria de solicitar um orçamento para meu condomínio."
+            href="https://wa.me/556292440750?text=Olá! Gostaria de solicitar um orçamento para meu condomínio."
             target="_blank"
             rel="noopener noreferrer"
             className="whatsapp-btn w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg hover:bg-[#20BA5A] hover:scale-110 transition-all duration-300"

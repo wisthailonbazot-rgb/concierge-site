@@ -153,7 +153,7 @@ export default function Hero() {
             {[
               { icon: Shield, text: "Equipe Treinada" },
               { icon: Clock, text: "Atendimento 24h" },
-              { icon: Star, text: "+10 Anos de Experiência" },
+              { icon: Star, text: "+4 Anos de Experiência" },
             ].map(({ icon: Icon, text }) => (
               <div key={text} className="flex items-center gap-2 text-white/60 text-sm">
                 <Icon size={16} className="text-gold-500" />

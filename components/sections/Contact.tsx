@@ -8,7 +8,7 @@ import { z } from "zod";
 import { Mail, CheckCircle, Phone, Clock, MessageCircle } from "lucide-react";
 
 // ← Substitua pelo número real (somente dígitos, com DDI 55, ex: "5511999998888")
-const WHATSAPP_NUMBER = "5500000000000";
+const WHATSAPP_NUMBER = "556292440750";
 
 function InstagramIcon({ size = 18, className }: { size?: number; className?: string }) {
   return (
@@ -113,8 +113,8 @@ export default function Contact() {
               {
                 icon: Phone,
                 label: "WhatsApp",
-                value: "(00) 00000-0000",
-                href: "https://wa.me/5500000000000",
+                value: "(62) 9244-0750",
+                href: "https://wa.me/556292440750",
               },
               {
                 icon: InstagramIcon,
@@ -211,7 +211,7 @@ export default function Contact() {
                       </label>
                       <input
                         {...register("phone")}
-                        placeholder="(00) 00000-0000"
+                        placeholder="(62) 9244-0750"
                         className={inputClass}
                       />
                       {errors.phone && <p className={errorClass}>{errors.phone.message}</p>}

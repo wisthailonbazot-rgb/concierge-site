@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 const stats = [
-  { value: 10, suffix: "+", label: "Anos de Experiência", description: "Serving since 2014" },
-  { value: 500, suffix: "+", label: "Contratos Realizados", description: "Condomínios atendidos" },
+  { value: 4, suffix: "+", label: "Anos de Experiência", description: "Fundada em 2021" },
+  { value: 50, suffix: "+", label: "Contratos Realizados", description: "Condomínios atendidos" },
   { value: 24, suffix: "h", label: "Atendimento Disponível", description: "Todos os dias" },
   { value: 7, suffix: "", label: "Serviços Especializados", description: "Soluções completas" },
 ];
