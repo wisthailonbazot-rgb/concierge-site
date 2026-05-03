@@ -37,7 +37,7 @@ export default function Differentials() {
       {/* Background parallax image */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/gallery/condo-predio.jpeg"
+          src="/gallery/condo-odus.jpeg"
           alt="Condomínio atendido pela Concierge Brasil"
           fill
           className="object-cover object-center"

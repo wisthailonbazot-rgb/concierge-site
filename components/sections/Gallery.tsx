@@ -12,13 +12,13 @@ const galleryImages = [
     span: "sm:col-span-2",
   },
   {
-    src: "/gallery/recepcao.png",
-    alt: "Recepção profissional",
+    src: "/gallery/condo-white.jpeg",
+    alt: "Condomínio residencial",
     span: "",
   },
   {
-    src: "/gallery/vigia.png",
-    alt: "Portaria 24h",
+    src: "/gallery/limpeza.jpeg",
+    alt: "Limpeza e conservação",
     span: "sm:row-span-2",
   },
   {
@@ -27,13 +27,13 @@ const galleryImages = [
     span: "",
   },
   {
-    src: "/gallery/jardinagem.png",
-    alt: "Jardinagem e conservação",
+    src: "/gallery/worker-gas.jpeg",
+    alt: "Zeladoria e manutenção",
     span: "",
   },
   {
-    src: "/gallery/manutencao.png",
-    alt: "Zeladoria e manutenção",
+    src: "/gallery/carro.jpeg",
+    alt: "Frota Concierge Brasil",
     span: "",
   },
 ];
