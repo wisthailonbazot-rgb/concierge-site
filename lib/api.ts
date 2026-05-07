@@ -62,26 +62,33 @@ export async function updateSettings(data: Partial<Settings>): Promise<Settings>
 }
 
 // ─── Gallery ───────────────────────────────────────────────────────────────
+export type GallerySection = "gallery" | "about" | "differentials" | "hero";
+
 export type GalleryImage = {
   id: string;
   src: string;
   alt: string;
   active: boolean;
   display_order: number;
+  section?: GallerySection;
   created_at?: string;
 };
 
-export async function getGallery(): Promise<GalleryImage[]> {
-  return apiFetch("/gallery");
+export async function getGallery(section?: GallerySection): Promise<GalleryImage[]> {
+  const qs = section ? `?section=${section}` : "";
+  return apiFetch(`/gallery${qs}`);
 }
 
-export async function getGalleryAll(): Promise<GalleryImage[]> {
-  return apiFetch("/gallery/all");
+export async function getGalleryAll(section?: GallerySection): Promise<GalleryImage[]> {
+  const qs = section ? `?section=${section}` : "";
+  return apiFetch(`/gallery/all${qs}`);
 }
 
-export async function uploadImages(files: File[]): Promise<GalleryImage[]> {
+export async function uploadImages(files: File[], section: GallerySection = "gallery", alt?: string): Promise<GalleryImage[]> {
   const form = new FormData();
   files.forEach((f) => form.append("images", f));
+  form.append("section", section);
+  if (alt) form.append("alt", alt);
   return apiFetch("/gallery", { method: "POST", body: form });
 }
 

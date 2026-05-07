@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { CheckCircle2, Award, Users, Target } from "lucide-react";
-import Image from "next/image";
+import { getGallery } from "@/lib/api";
+
+const FALLBACK_IMG = "/gallery/condo-aereo.jpeg";
 
 const highlights = [
   "Equipe profissional treinada e uniformizada",
@@ -23,6 +25,19 @@ const values = [
 export default function About() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [photoSrc, setPhotoSrc] = useState(FALLBACK_IMG);
+  const [photoAlt, setPhotoAlt] = useState("Condomínio atendido pela Concierge Brasil");
+
+  useEffect(() => {
+    getGallery("about")
+      .then((data) => {
+        if (data.length > 0) {
+          setPhotoSrc(data[0].src);
+          setPhotoAlt(data[0].alt);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section id="sobre" className="py-20 md:py-28 bg-white relative overflow-hidden">
@@ -39,11 +54,10 @@ export default function About() {
             className="relative"
           >
             <div className="relative rounded-2xl overflow-hidden shadow-premium">
-              <Image
-                src="/gallery/condo-aereo.jpeg"
-                alt="Condomínio atendido pela Concierge Brasil"
-                width={700}
-                height={800}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={photoSrc}
+                alt={photoAlt}
                 className="w-full h-[300px] sm:h-[420px] lg:h-[500px] object-cover"
               />
               {/* Overlay */}

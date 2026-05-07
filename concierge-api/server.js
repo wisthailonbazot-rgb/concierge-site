@@ -115,15 +115,22 @@ app.put("/settings", auth, (req, res) => {
   res.json(updated);
 });
 
-// GALLERY — public (only active)
+// GALLERY — public (only active, optional ?section= filter)
 app.get("/gallery", (req, res) => {
   const images = readJSON("gallery.json", []);
-  res.json(images.filter((img) => img.active !== false).sort((a, b) => a.display_order - b.display_order));
+  const { section } = req.query;
+  let result = images.filter((img) => img.active !== false);
+  if (section) result = result.filter((img) => (img.section || "gallery") === section);
+  res.json(result.sort((a, b) => a.display_order - b.display_order));
 });
 
-// GALLERY — all (admin)
+// GALLERY — all (admin, optional ?section= filter)
 app.get("/gallery/all", auth, (req, res) => {
-  res.json(readJSON("gallery.json", []).sort((a, b) => a.display_order - b.display_order));
+  const images = readJSON("gallery.json", []);
+  const { section } = req.query;
+  let result = [...images];
+  if (section) result = result.filter((img) => (img.section || "gallery") === section);
+  res.json(result.sort((a, b) => a.display_order - b.display_order));
 });
 
 // GALLERY — upload
@@ -132,11 +139,21 @@ app.post("/gallery", auth, upload.array("images", 20), (req, res) => {
 
   const images = readJSON("gallery.json", []);
   const BASE_URL = (process.env.BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, "");
+  const section = req.body.section || "gallery";
+
+  // For single-image sections, deactivate existing images of that section
+  const singleSections = ["about", "differentials", "hero"];
+  if (singleSections.includes(section)) {
+    images.forEach((img) => {
+      if ((img.section || "gallery") === section) img.active = false;
+    });
+  }
 
   const newImages = req.files.map((file, i) => ({
     id: uuidv4(),
     src: `${BASE_URL}/uploads/gallery/${file.filename}`,
-    alt: file.originalname.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "),
+    alt: req.body.alt || file.originalname.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "),
+    section,
     active: true,
     display_order: images.length + i + 1,
     created_at: new Date().toISOString(),

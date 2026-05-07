@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { Users, TrendingUp, Clock4, Heart } from "lucide-react";
-import Image from "next/image";
+import { getGallery } from "@/lib/api";
+
+const FALLBACK_BG = "/gallery/condo-odus.jpeg";
 
 const differentials = [
   {
@@ -31,16 +33,23 @@ const differentials = [
 export default function Differentials() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const [bgSrc, setBgSrc] = useState(FALLBACK_BG);
+
+  useEffect(() => {
+    getGallery("differentials")
+      .then((data) => { if (data.length > 0) setBgSrc(data[0].src); })
+      .catch(() => {});
+  }, []);
 
   return (
     <section id="diferenciais" className="relative py-20 md:py-28 overflow-hidden">
       {/* Background parallax image */}
       <div className="absolute inset-0 -z-10">
-        <Image
-          src="/gallery/condo-odus.jpeg"
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={bgSrc}
           alt="Condomínio atendido pela Concierge Brasil"
-          fill
-          className="object-cover object-center"
+          className="w-full h-full object-cover object-center"
           style={{ transform: "scale(1.1)" }}
         />
         <div className="absolute inset-0 overlay-navy" />
