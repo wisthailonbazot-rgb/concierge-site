@@ -6,6 +6,7 @@ import About from "@/components/sections/About";
 import Services from "@/components/sections/Services";
 import Differentials from "@/components/sections/Differentials";
 import Gallery from "@/components/sections/Gallery";
+import WorkWithUs from "@/components/sections/WorkWithUs";
 import Contact from "@/components/sections/Contact";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import CookieBanner from "@/components/ui/CookieBanner";
@@ -23,6 +24,7 @@ export default function Home() {
         <Services />
         <Differentials />
         <Gallery />
+        <WorkWithUs />
         <Contact />
       </main>
       <Footer />

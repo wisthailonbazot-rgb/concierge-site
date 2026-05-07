@@ -11,6 +11,7 @@ const navLinks = [
   { label: "Serviços", href: "#servicos" },
   { label: "Diferenciais", href: "#diferenciais" },
   { label: "Galeria", href: "#galeria" },
+  { label: "Vagas", href: "#trabalhe-conosco" },
   { label: "Contato", href: "#contato" },
 ];
 
