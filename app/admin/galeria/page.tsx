@@ -1,16 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { createClient } from "@/lib/supabase";
+import { getGalleryAll, uploadImages, updateImage, deleteImage, type GalleryImage } from "@/lib/api";
 import { Trash2, Upload, Eye, EyeOff, Loader, ImageOff } from "lucide-react";
-
-type GalleryImage = {
-  id: string;
-  src: string;
-  alt: string;
-  active: boolean;
-  display_order: number;
-};
 
 export default function GaleriaAdmin() {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -19,14 +11,14 @@ export default function GaleriaAdmin() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
-    const supabase = createClient();
-    if (!supabase) { setLoading(false); return; }
-    const { data } = await supabase
-      .from("gallery_images")
-      .select("*")
-      .order("display_order", { ascending: true });
-    if (data) setImages(data);
-    setLoading(false);
+    try {
+      const data = await getGalleryAll();
+      setImages(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -36,60 +28,42 @@ export default function GaleriaAdmin() {
     if (!files?.length) return;
 
     setUploading(true);
-    const supabase = createClient();
-    if (!supabase) { setUploading(false); return; }
-
-    for (const file of Array.from(files)) {
-      const ext = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("gallery")
-        .upload(fileName, file, { cacheControl: "3600", upsert: false });
-
-      if (uploadError) { console.error(uploadError); continue; }
-
-      const { data: { publicUrl } } = supabase.storage.from("gallery").getPublicUrl(fileName);
-
-      await supabase.from("gallery_images").insert({
-        src: publicUrl,
-        alt: file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "),
-        active: true,
-        display_order: images.length + 1,
-      });
+    try {
+      const newImages = await uploadImages(Array.from(files));
+      setImages((prev) => [...prev, ...newImages]);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
-
-    await load();
-    setUploading(false);
-    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const toggleActive = async (id: string, current: boolean) => {
-    const supabase = createClient();
-    if (!supabase) return;
-    await supabase.from("gallery_images").update({ active: !current }).eq("id", id);
-    setImages((prev) => prev.map((img) => (img.id === id ? { ...img, active: !current } : img)));
+    try {
+      await updateImage(id, { active: !current });
+      setImages((prev) => prev.map((img) => (img.id === id ? { ...img, active: !current } : img)));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleDelete = async (id: string, src: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Remover esta foto da galeria?")) return;
-    const supabase = createClient();
-    if (!supabase) return;
-
-    // Delete from storage if Supabase URL
-    if (src.includes("/storage/v1/object/public/gallery/")) {
-      const path = src.split("/gallery/")[1];
-      await supabase.storage.from("gallery").remove([path]);
+    try {
+      await deleteImage(id);
+      setImages((prev) => prev.filter((img) => img.id !== id));
+    } catch (err) {
+      console.error(err);
     }
-
-    await supabase.from("gallery_images").delete().eq("id", id);
-    setImages((prev) => prev.filter((img) => img.id !== id));
   };
 
   const handleAltChange = async (id: string, alt: string) => {
-    const supabase = createClient();
-    if (!supabase) return;
-    await supabase.from("gallery_images").update({ alt }).eq("id", id);
+    try {
+      await updateImage(id, { alt });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -170,7 +144,7 @@ export default function GaleriaAdmin() {
                   {img.active ? <Eye size={12} /> : <EyeOff size={12} />}
                 </button>
                 <button
-                  onClick={() => handleDelete(img.id, img.src)}
+                  onClick={() => handleDelete(img.id)}
                   title="Remover"
                   className="w-7 h-7 bg-navy-900/90 backdrop-blur rounded-lg flex items-center justify-center text-white hover:text-red-400 transition-colors"
                 >

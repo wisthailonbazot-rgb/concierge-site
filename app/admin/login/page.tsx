@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase";
+import { login, saveToken } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
@@ -19,23 +19,15 @@ export default function AdminLogin() {
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
-    if (!supabase) {
-      setError("Supabase não configurado. Configure as variáveis de ambiente.");
-      setLoading(false);
-      return;
-    }
-
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (authError) {
+    try {
+      const { token } = await login(email, password);
+      saveToken(token);
+      router.push("/admin");
+      router.refresh();
+    } catch {
       setError("Email ou senha incorretos.");
       setLoading(false);
-      return;
     }
-
-    router.push("/admin");
-    router.refresh();
   };
 
   return (

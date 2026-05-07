@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase";
+import { getToken, getMe, clearToken } from "@/lib/api";
 import { useRouter, usePathname } from "next/navigation";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 
@@ -18,16 +18,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     const checkAuth = async () => {
-      const supabase = createClient();
-      if (!supabase) {
+      const token = getToken();
+      if (!token) {
         router.push("/admin/login");
         return;
       }
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        router.push("/admin/login");
-      } else {
+
+      try {
+        await getMe();
         setChecking(false);
+      } catch {
+        clearToken();
+        router.push("/admin/login");
       }
     };
 

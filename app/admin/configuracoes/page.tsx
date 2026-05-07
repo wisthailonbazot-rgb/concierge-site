@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase";
+import { getSettings, updateSettings, type Settings } from "@/lib/api";
 import { Save, CheckCircle, AlertCircle } from "lucide-react";
 
-const fields = [
+const fields: { key: keyof Settings; label: string; placeholder: string; type: string }[] = [
   { key: "phone", label: "Telefone (exibido no site)", placeholder: "(62) 9244-0750", type: "tel" },
   { key: "whatsapp", label: "WhatsApp (só números com DDI)", placeholder: "556292440750", type: "text" },
   { key: "email", label: "E-mail de contato", placeholder: "conciergeconservacao@gmail.com", type: "email" },
@@ -14,36 +14,21 @@ const fields = [
 type Status = "idle" | "saving" | "saved" | "error";
 
 export default function ConfigPage() {
-  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [settings, setSettings] = useState<Settings>({ phone: "", whatsapp: "", email: "", instagram: "" });
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<Status>("idle");
 
   useEffect(() => {
-    const load = async () => {
-      const supabase = createClient();
-      if (!supabase) { setLoading(false); return; }
-      const { data } = await supabase.from("site_settings").select("*");
-      if (data) {
-        const obj: Record<string, string> = {};
-        data.forEach((row: { key: string; value: string }) => (obj[row.key] = row.value));
-        setSettings(obj);
-      }
-      setLoading(false);
-    };
-    load();
+    getSettings()
+      .then(setSettings)
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
   const handleSave = async () => {
     setStatus("saving");
-    const supabase = createClient();
-    if (!supabase) { setStatus("error"); return; }
-
     try {
-      for (const [key, value] of Object.entries(settings)) {
-        await supabase
-          .from("site_settings")
-          .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: "key" });
-      }
+      await updateSettings(settings);
       setStatus("saved");
       setTimeout(() => setStatus("idle"), 3000);
     } catch {
@@ -101,7 +86,7 @@ export default function ConfigPage() {
         {status === "error" && (
           <div className="flex items-center gap-1.5 text-red-400 text-sm">
             <AlertCircle size={15} />
-            Erro ao salvar. Verifique o Supabase.
+            Erro ao salvar. Verifique a conexão.
           </div>
         )}
       </div>

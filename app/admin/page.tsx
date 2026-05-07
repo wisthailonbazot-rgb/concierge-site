@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Settings, Images, Briefcase, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase";
+import { getMe } from "@/lib/api";
 
 const cards = [
   {
@@ -36,13 +36,7 @@ export default function AdminDashboard() {
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    const getUser = async () => {
-      const supabase = createClient();
-      if (!supabase) return;
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user?.email) setEmail(user.email);
-    };
-    getUser();
+    getMe().then((data) => setEmail(data.email)).catch(() => {});
   }, []);
 
   return (

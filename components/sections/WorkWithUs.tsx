@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { Briefcase, MessageCircle, CheckCircle2 } from "lucide-react";
-import { createClient } from "@/lib/supabase";
+import { getJobs } from "@/lib/api";
 
 type JobOpening = {
   id: string;
@@ -37,21 +37,9 @@ export default function WorkWithUs() {
   const [positions, setPositions] = useState<JobOpening[]>(defaultPositions);
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const supabase = createClient();
-        if (!supabase) return;
-        const { data, error } = await supabase
-          .from("job_openings")
-          .select("*")
-          .eq("active", true)
-          .order("display_order", { ascending: true });
-        if (!error && data && data.length > 0) setPositions(data);
-      } catch {
-        // usa defaults
-      }
-    };
-    fetchJobs();
+    getJobs()
+      .then((data) => { if (data.length > 0) setPositions(data); })
+      .catch(() => {}); // usa defaults se a API falhar
   }, []);
 
   const handleSendResume = () => {

@@ -1,15 +1,12 @@
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Supabase foi substituído pela API VPS própria.
+// Use lib/api.ts para todas as operações de dados.
+// Este arquivo existe apenas para evitar erros de importação em arquivos que possam
+// ainda referenciar createClient — mas nenhum arquivo deve mais usar isto.
 
 export function createClient() {
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return null;
-  }
-  return createSupabaseClient(supabaseUrl, supabaseAnonKey);
+  return null;
 }
 
 export function isSupabaseConfigured() {
-  return !!(supabaseUrl && supabaseAnonKey);
+  return false;
 }

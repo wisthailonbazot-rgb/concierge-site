@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase";
+import { clearToken } from "@/lib/api";
 import { Settings, Images, Briefcase, Home, LogOut, ExternalLink } from "lucide-react";
 import Image from "next/image";
 
@@ -17,9 +17,8 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleLogout = async () => {
-    const supabase = createClient();
-    if (supabase) await supabase.auth.signOut();
+  const handleLogout = () => {
+    clearToken();
     router.push("/admin/login");
     router.refresh();
   };

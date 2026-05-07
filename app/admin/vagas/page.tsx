@@ -1,16 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase";
+import { getJobsAll, createJob, updateJob, deleteJob, type Job } from "@/lib/api";
 import { Plus, Trash2, Briefcase } from "lucide-react";
-
-type Job = {
-  id: string;
-  title: string;
-  description: string;
-  active: boolean;
-  display_order: number;
-};
 
 export default function VagasAdmin() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -20,14 +12,14 @@ export default function VagasAdmin() {
   const [adding, setAdding] = useState(false);
 
   const load = async () => {
-    const supabase = createClient();
-    if (!supabase) { setLoading(false); return; }
-    const { data } = await supabase
-      .from("job_openings")
-      .select("*")
-      .order("display_order", { ascending: true });
-    if (data) setJobs(data);
-    setLoading(false);
+    try {
+      const data = await getJobsAll();
+      setJobs(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -36,38 +28,43 @@ export default function VagasAdmin() {
     e.preventDefault();
     if (!newTitle.trim()) return;
     setAdding(true);
-    const supabase = createClient();
-    if (!supabase) { setAdding(false); return; }
-    const { data } = await supabase
-      .from("job_openings")
-      .insert({ title: newTitle, description: newDesc, active: true, display_order: jobs.length + 1 })
-      .select()
-      .single();
-    if (data) setJobs((prev) => [...prev, data]);
-    setNewTitle("");
-    setNewDesc("");
-    setAdding(false);
+    try {
+      const job = await createJob({ title: newTitle, description: newDesc });
+      setJobs((prev) => [...prev, job]);
+      setNewTitle("");
+      setNewDesc("");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setAdding(false);
+    }
   };
 
   const handleToggle = async (id: string, active: boolean) => {
-    const supabase = createClient();
-    if (!supabase) return;
-    await supabase.from("job_openings").update({ active: !active }).eq("id", id);
-    setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, active: !active } : j)));
+    try {
+      await updateJob(id, { active: !active });
+      setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, active: !active } : j)));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Remover esta vaga?")) return;
-    const supabase = createClient();
-    if (!supabase) return;
-    await supabase.from("job_openings").delete().eq("id", id);
-    setJobs((prev) => prev.filter((j) => j.id !== id));
+    try {
+      await deleteJob(id);
+      setJobs((prev) => prev.filter((j) => j.id !== id));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleUpdate = async (id: string, field: keyof Job, value: string) => {
-    const supabase = createClient();
-    if (!supabase) return;
-    await supabase.from("job_openings").update({ [field]: value }).eq("id", id);
+    try {
+      await updateJob(id, { [field]: value });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
