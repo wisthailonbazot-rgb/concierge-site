@@ -3,7 +3,7 @@
  * API URL configured via NEXT_PUBLIC_API_URL env var
  */
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://ee2a7v0qab1uss9caug5hcay.209.50.229.119.sslip.io").replace(/\/$/, "");
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "https://concierge-api.209.50.229.119.sslip.io").replace(/\/$/, "");
 
 const TOKEN_KEY = "concierge_admin_token";
 
