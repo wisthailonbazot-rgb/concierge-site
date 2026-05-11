@@ -94,7 +94,10 @@ export default function ServicosAdmin() {
   };
 
   const handleUpdate = async (id: string, data: Partial<Service>) => {
-    try { await updateService(id, data); } catch (err) { console.error(err); }
+    try {
+      await updateService(id, data);
+      setServices((prev) => prev.map((s) => (s.id === id ? { ...s, ...data } : s)));
+    } catch (err) { console.error(err); }
   };
 
   const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-white/20 focus:outline-none focus:border-gold-500/50 text-sm transition-colors";
@@ -200,7 +203,7 @@ export default function ServicosAdmin() {
                 {/* Icon selector */}
                 <div className="flex-shrink-0 mt-0.5">
                   <select
-                    defaultValue={svc.icon_name}
+                    value={svc.icon_name}
                     onChange={(e) => handleUpdate(svc.id, { icon_name: e.target.value })}
                     className={`${selectCls} appearance-none cursor-pointer`}
                     title="Trocar ícone"
