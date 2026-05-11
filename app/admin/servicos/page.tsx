@@ -12,7 +12,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 // ─── Available icons ────────────────────────────────────────────────────────
-export const ICON_MAP: Record<string, LucideIcon> = {
+const ICON_MAP: Record<string, LucideIcon> = {
   DoorOpen, UserCheck, Shield, Wrench, Sparkles, Waves, Leaf,
   Building2, Users, Key, Truck, Clock, Zap, Droplets, Star, Package,
 };
