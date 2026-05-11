@@ -62,12 +62,22 @@ if (!fs.existsSync(path.join(DATA_DIR, "jobs.json"))) writeJSON("jobs.json", DEF
 if (!fs.existsSync(path.join(DATA_DIR, "gallery.json"))) writeJSON("gallery.json", []);
 if (!fs.existsSync(path.join(DATA_DIR, "services.json"))) writeJSON("services.json", DEFAULT_SERVICES);
 
-// Migrate old settings: if phones array missing, create from phone field
+// Migrate old settings — add missing fields so API always returns complete object
 const existingSettings = readJSON("settings.json", DEFAULT_SETTINGS);
+let migrated = false;
 if (!existingSettings.phones) {
-  existingSettings.phones = existingSettings.phone ? [existingSettings.phone] : ["(62) 9244-0750"];
-  writeJSON("settings.json", existingSettings);
+  existingSettings.phones = existingSettings.phone ? [existingSettings.phone] : DEFAULT_SETTINGS.phones;
+  migrated = true;
 }
+if (!existingSettings.hero_title) {
+  existingSettings.hero_title = DEFAULT_SETTINGS.hero_title;
+  migrated = true;
+}
+if (!existingSettings.hero_subtitle) {
+  existingSettings.hero_subtitle = DEFAULT_SETTINGS.hero_subtitle;
+  migrated = true;
+}
+if (migrated) writeJSON("settings.json", existingSettings);
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors({ origin: "*", methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"] }));
