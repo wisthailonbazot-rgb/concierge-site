@@ -34,6 +34,8 @@ const DEFAULT_SETTINGS = {
   whatsapp: "556292440750",
   email: "conciergeconservacao@gmail.com",
   instagram: "conciergeconservacao",
+  hero_title: "SEGURANÇA E EXCELÊNCIA PARA SEU CONDOMÍNIO",
+  hero_subtitle: "Portaria 24h, zeladoria, limpeza e conservação profissional. Mais de uma década cuidando dos melhores condomínios com dedicação e excelência.",
 };
 
 const DEFAULT_JOBS = [

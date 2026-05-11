@@ -12,6 +12,8 @@ export default function ConfigPage() {
     whatsapp: "",
     email: "",
     instagram: "",
+    hero_title: "SEGURANÇA E EXCELÊNCIA PARA SEU CONDOMÍNIO",
+    hero_subtitle: "Portaria 24h, zeladoria, limpeza e conservação profissional. Mais de uma década cuidando dos melhores condomínios com dedicação e excelência.",
   });
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<Status>("idle");
@@ -167,6 +169,44 @@ export default function ConfigPage() {
             placeholder="conciergeconservacao"
             className={inputCls}
           />
+        </div>
+
+        {/* ── Hero ──────────────────────────────────────────────────────── */}
+        <div className="pt-4 border-t border-white/8">
+          <p className="text-gold-500/80 text-xs tracking-widest uppercase font-bold mb-4">
+            Texto do Hero (página inicial)
+          </p>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-white/60 text-xs tracking-wide mb-2 uppercase">
+                Título principal
+              </label>
+              <input
+                type="text"
+                value={settings.hero_title ?? ""}
+                onChange={(e) => setSettings((prev) => ({ ...prev, hero_title: e.target.value }))}
+                placeholder="SEGURANÇA E EXCELÊNCIA PARA SEU CONDOMÍNIO"
+                className={inputCls}
+              />
+              <p className="text-white/20 text-xs mt-1.5">
+                Texto em caixa alta com animação letra por letra. Mantenha curto e impactante.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-white/60 text-xs tracking-wide mb-2 uppercase">
+                Subtítulo
+              </label>
+              <textarea
+                value={settings.hero_subtitle ?? ""}
+                onChange={(e) => setSettings((prev) => ({ ...prev, hero_subtitle: e.target.value }))}
+                placeholder="Portaria 24h, zeladoria, limpeza e conservação profissional..."
+                rows={3}
+                className={`${inputCls} resize-none`}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

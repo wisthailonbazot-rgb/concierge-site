@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, Shield, Clock, Star } from "lucide-react";
+import { getSettings } from "@/lib/api";
+
+const DEFAULT_TITLE    = "SEGURANÇA E EXCELÊNCIA PARA SEU CONDOMÍNIO";
+const DEFAULT_SUBTITLE = "Portaria 24h, zeladoria, limpeza e conservação profissional. Mais de uma década cuidando dos melhores condomínios com dedicação e excelência.";
 
 const particles = Array.from({ length: 20 }, (_, i) => ({
   id: i,
@@ -15,16 +19,26 @@ const particles = Array.from({ length: 20 }, (_, i) => ({
 
 export default function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const [heroTitle,    setHeroTitle]    = useState(DEFAULT_TITLE);
+  const [heroSubtitle, setHeroSubtitle] = useState(DEFAULT_SUBTITLE);
 
+  // Fetch dynamic text from settings API
+  useEffect(() => {
+    getSettings()
+      .then((s) => {
+        if (s.hero_title)    setHeroTitle(s.hero_title);
+        if (s.hero_subtitle) setHeroSubtitle(s.hero_subtitle);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Letter-by-letter animation — re-runs whenever title changes
   useEffect(() => {
     const el = titleRef.current;
     if (!el) return;
-    const text = el.getAttribute("data-text") || "";
     let charIndex = 0;
 
-    // Wrap each WORD in inline-block to prevent mid-word line breaks,
-    // then animate each character inside.
-    el.innerHTML = text
+    el.innerHTML = heroTitle
       .split(" ")
       .map((word) => {
         const chars = word
@@ -45,7 +59,7 @@ export default function Hero() {
       });
     }, 200);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [heroTitle]);
 
   const scrollToServices = () => {
     document.getElementById("servicos")?.scrollIntoView({ behavior: "smooth" });
@@ -84,7 +98,7 @@ export default function Hero() {
         ))}
       </div>
 
-      {/* Decorative rings — hidden on mobile to avoid visual clutter */}
+      {/* Decorative rings — hidden on mobile */}
       <div className="pointer-events-none hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-gold-500/5 animate-spin-slow" />
       <div className="pointer-events-none hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-gold-500/8" />
 
@@ -102,10 +116,9 @@ export default function Hero() {
             Atendimento 24h · 7 dias por semana
           </motion.div>
 
-          {/* Main title */}
+          {/* Main title — animated letter-by-letter */}
           <h1
             ref={titleRef}
-            data-text="SEGURANÇA E EXCELÊNCIA PARA SEU CONDOMÍNIO"
             className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-white leading-tight sm:leading-none tracking-wide mb-6"
           />
 
@@ -116,8 +129,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 1.2 }}
             className="text-white/70 text-lg sm:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
           >
-            Portaria 24h, zeladoria, limpeza e conservação profissional.
-            Mais de uma década cuidando dos melhores condomínios com dedicação e excelência.
+            {heroSubtitle}
           </motion.p>
 
           {/* CTA Buttons */}

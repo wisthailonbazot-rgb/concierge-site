@@ -52,6 +52,8 @@ export type Settings = {
   whatsapp: string;
   email: string;
   instagram: string;
+  hero_title?: string;    // título principal do Hero
+  hero_subtitle?: string; // subtítulo do Hero
 };
 
 /** Retorna a lista de telefones para exibição */
