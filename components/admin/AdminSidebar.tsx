@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { clearToken } from "@/lib/api";
-import { Settings, Images, Briefcase, Home, LogOut, ExternalLink } from "lucide-react";
+import { Settings, Images, Briefcase, Home, LogOut, ExternalLink, Wrench } from "lucide-react";
 import Image from "next/image";
 
 const navItems = [
   { label: "Dashboard", href: "/admin", icon: Home },
   { label: "Configurações", href: "/admin/configuracoes", icon: Settings },
   { label: "Galeria", href: "/admin/galeria", icon: Images },
+  { label: "Serviços", href: "/admin/servicos", icon: Wrench },
   { label: "Vagas", href: "/admin/vagas", icon: Briefcase },
 ];
 

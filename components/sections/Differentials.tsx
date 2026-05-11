@@ -34,10 +34,16 @@ export default function Differentials() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const [bgSrc, setBgSrc] = useState(FALLBACK_BG);
+  const [bgPos, setBgPos] = useState("center");
 
   useEffect(() => {
     getGallery("differentials")
-      .then((data) => { if (data.length > 0) setBgSrc(data[0].src); })
+      .then((data) => {
+        if (data.length > 0) {
+          setBgSrc(data[0].src);
+          setBgPos(data[0].object_position || "center");
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -49,8 +55,8 @@ export default function Differentials() {
         <img
           src={bgSrc}
           alt="Condomínio atendido pela Concierge Brasil"
-          className="w-full h-full object-cover object-center"
-          style={{ transform: "scale(1.1)" }}
+          className="w-full h-full object-cover"
+          style={{ transform: "scale(1.1)", objectPosition: bgPos }}
         />
         <div className="absolute inset-0 overlay-navy" />
       </div>

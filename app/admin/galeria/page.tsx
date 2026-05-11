@@ -29,16 +29,45 @@ const SECTIONS: { key: GallerySection; label: string; description: string; singl
   },
 ];
 
+// ─── Position selector ──────────────────────────────────────────────────────
+const POSITION_OPTIONS = [
+  { value: "center",        label: "Centro" },
+  { value: "top",           label: "Topo" },
+  { value: "bottom",        label: "Base" },
+  { value: "left",          label: "Esquerda" },
+  { value: "right",         label: "Direita" },
+  { value: "top center",    label: "Centro alto" },
+  { value: "bottom center", label: "Centro baixo" },
+];
+
+function PositionSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <select
+      value={value || "center"}
+      onChange={(e) => onChange(e.target.value)}
+      onClick={(e) => e.stopPropagation()}
+      title="Ajustar enquadramento da foto"
+      className="w-full bg-navy-950 border border-white/10 rounded-lg px-2 py-1.5 text-white/50 text-[11px] focus:outline-none focus:border-gold-500/40 focus:text-white transition-colors cursor-pointer"
+    >
+      {POSITION_OPTIONS.map((o) => (
+        <option key={o.value} value={o.value}>{o.label}</option>
+      ))}
+    </select>
+  );
+}
+
 // ─── Single image slot component ───────────────────────────────────────────
 function SingleImageSlot({
   image,
   onReplace,
   onDelete,
+  onPositionChange,
   uploading,
 }: {
   image: GalleryImage | null;
   onReplace: (file: File) => void;
   onDelete: (id: string) => void;
+  onPositionChange: (id: string, pos: string) => void;
   uploading: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -49,27 +78,42 @@ function SingleImageSlot({
         <div className="relative rounded-xl overflow-hidden border border-white/10 group">
           <div className="aspect-video bg-white/5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={image.src} alt={image.alt} className="w-full h-full object-cover" />
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="w-full h-full object-cover"
+              style={{ objectPosition: image.object_position || "center" }}
+            />
           </div>
-          <div className="p-3 bg-navy-900/95 flex items-center justify-between gap-3">
-            <p className="text-white/60 text-xs truncate">{image.alt || "Sem descrição"}</p>
-            <div className="flex gap-2 flex-shrink-0">
-              <input ref={inputRef} type="file" accept="image/*" className="hidden"
-                onChange={(e) => { const f = e.target.files?.[0]; if (f) onReplace(f); e.target.value = ""; }} />
-              <button
-                onClick={() => inputRef.current?.click()}
-                disabled={uploading}
-                className="flex items-center gap-1.5 bg-gold-500/15 hover:bg-gold-500/25 border border-gold-500/25 text-gold-500 text-xs font-bold px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
-              >
-                {uploading ? <Loader size={12} className="animate-spin" /> : <RefreshCw size={12} />}
-                Substituir
-              </button>
-              <button
-                onClick={() => onDelete(image.id)}
-                className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs px-3 py-1.5 rounded-lg transition-all"
-              >
-                <Trash2 size={12} />
-              </button>
+          <div className="p-3 bg-navy-900/95 space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-white/60 text-xs truncate">{image.alt || "Sem descrição"}</p>
+              <div className="flex gap-2 flex-shrink-0">
+                <input ref={inputRef} type="file" accept="image/*" className="hidden"
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) onReplace(f); e.target.value = ""; }} />
+                <button
+                  onClick={() => inputRef.current?.click()}
+                  disabled={uploading}
+                  className="flex items-center gap-1.5 bg-gold-500/15 hover:bg-gold-500/25 border border-gold-500/25 text-gold-500 text-xs font-bold px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
+                >
+                  {uploading ? <Loader size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+                  Substituir
+                </button>
+                <button
+                  onClick={() => onDelete(image.id)}
+                  className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs px-3 py-1.5 rounded-lg transition-all"
+                >
+                  <Trash2 size={12} />
+                </button>
+              </div>
+            </div>
+            {/* Position selector */}
+            <div className="flex items-center gap-2">
+              <span className="text-white/30 text-[11px] whitespace-nowrap flex-shrink-0">Enquadramento:</span>
+              <PositionSelect
+                value={image.object_position || "center"}
+                onChange={(pos) => onPositionChange(image.id, pos)}
+              />
             </div>
           </div>
         </div>
@@ -99,6 +143,7 @@ function MultiImageGrid({
   onToggle,
   onDelete,
   onAltChange,
+  onPositionChange,
   onUpload,
   uploading,
 }: {
@@ -106,6 +151,7 @@ function MultiImageGrid({
   onToggle: (id: string, active: boolean) => void;
   onDelete: (id: string) => void;
   onAltChange: (id: string, alt: string) => void;
+  onPositionChange: (id: string, pos: string) => void;
   onUpload: (files: File[]) => void;
   uploading: boolean;
 }) {
@@ -149,16 +195,28 @@ function MultiImageGrid({
             >
               <div className="aspect-square bg-white/5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.src} alt={img.alt} className="w-full h-full object-cover" loading="lazy" />
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className="w-full h-full object-cover"
+                  style={{ objectPosition: img.object_position || "center" }}
+                  loading="lazy"
+                />
               </div>
-              <div className="p-2 bg-navy-900/95">
+              <div className="p-2 bg-navy-900/95 space-y-1.5">
                 <input
                   defaultValue={img.alt}
                   onBlur={(e) => onAltChange(img.id, e.target.value)}
                   className="w-full text-white/50 text-xs bg-transparent focus:outline-none focus:text-white truncate"
                   placeholder="Descrição da foto..."
                 />
+                {/* Position selector */}
+                <PositionSelect
+                  value={img.object_position || "center"}
+                  onChange={(pos) => onPositionChange(img.id, pos)}
+                />
               </div>
+
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => onToggle(img.id, img.active)}
@@ -216,7 +274,6 @@ export default function GaleriaAdmin() {
 
   useEffect(() => { loadAll(); }, []);
 
-  // Multi-image section handlers
   const handleUpload = async (files: File[], section: GallerySection) => {
     setUploading(true);
     try {
@@ -229,12 +286,11 @@ export default function GaleriaAdmin() {
     finally { setUploading(false); }
   };
 
-  // Single-image replace: upload then reload all (server auto-deactivates old)
   const handleReplace = async (file: File, section: GallerySection) => {
     setUploading(true);
     try {
       await uploadImages([file], section);
-      await loadAll(); // refresh all to pick up deactivations
+      await loadAll();
     } catch (err) { console.error(err); }
     finally { setUploading(false); }
   };
@@ -264,9 +320,23 @@ export default function GaleriaAdmin() {
     try { await updateImage(id, { alt }); } catch (err) { console.error(err); }
   };
 
+  const handlePositionChange = async (id: string, object_position: string, section: GallerySection) => {
+    try {
+      await updateImage(id, { object_position });
+      setImagesBySection((prev) => ({
+        ...prev,
+        [section]: prev[section].map((img) =>
+          img.id === id ? { ...img, object_position } : img
+        ),
+      }));
+    } catch (err) { console.error(err); }
+  };
+
   const currentSection = SECTIONS.find((s) => s.key === activeTab)!;
   const currentImages = imagesBySection[activeTab];
-  const singleImage = currentSection.single ? (currentImages.find((i) => i.active) || currentImages[0] || null) : null;
+  const singleImage = currentSection.single
+    ? (currentImages.find((i) => i.active) || currentImages[0] || null)
+    : null;
 
   return (
     <div>
@@ -310,6 +380,7 @@ export default function GaleriaAdmin() {
           image={singleImage}
           onReplace={(f) => handleReplace(f, activeTab)}
           onDelete={(id) => handleDelete(id, activeTab)}
+          onPositionChange={(id, pos) => handlePositionChange(id, pos, activeTab)}
           uploading={uploading}
         />
       ) : (
@@ -318,13 +389,14 @@ export default function GaleriaAdmin() {
           onToggle={(id, active) => handleToggle(id, active, activeTab)}
           onDelete={(id) => handleDelete(id, activeTab)}
           onAltChange={handleAltChange}
+          onPositionChange={(id, pos) => handlePositionChange(id, pos, activeTab)}
           onUpload={(files) => handleUpload(files, activeTab)}
           uploading={uploading}
         />
       )}
 
       <p className="text-white/15 text-xs mt-8">
-        Fotos com o ícone de olho fechado (na galeria) não são exibidas no site.
+        Use &quot;Enquadramento&quot; para ajustar o recorte: Topo, Base, Centro etc.
         Nas seções únicas, a nova foto substitui automaticamente a anterior.
       </p>
     </div>

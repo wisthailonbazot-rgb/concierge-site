@@ -27,6 +27,7 @@ export default function About() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [photoSrc, setPhotoSrc] = useState(FALLBACK_IMG);
   const [photoAlt, setPhotoAlt] = useState("Condomínio atendido pela Concierge Brasil");
+  const [photoPos, setPhotoPos] = useState("center");
 
   useEffect(() => {
     getGallery("about")
@@ -34,6 +35,7 @@ export default function About() {
         if (data.length > 0) {
           setPhotoSrc(data[0].src);
           setPhotoAlt(data[0].alt);
+          setPhotoPos(data[0].object_position || "center");
         }
       })
       .catch(() => {});
@@ -59,6 +61,7 @@ export default function About() {
                 src={photoSrc}
                 alt={photoAlt}
                 className="w-full h-[300px] sm:h-[420px] lg:h-[500px] object-cover"
+                style={{ objectPosition: photoPos }}
               />
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-navy-900/60 via-transparent to-transparent" />

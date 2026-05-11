@@ -3,17 +3,26 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X } from "lucide-react";
+import { getSettings } from "@/lib/api";
 
 export default function WhatsAppButton() {
   const [visible, setVisible] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [whatsapp, setWhatsapp] = useState("556292440750");
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 2000);
     const tooltipTimer = setTimeout(() => setTooltipOpen(true), 4000);
     const tooltipClose = setTimeout(() => setTooltipOpen(false), 9000);
+
+    getSettings()
+      .then((s) => { if (s.whatsapp) setWhatsapp(s.whatsapp); })
+      .catch(() => {});
+
     return () => { clearTimeout(timer); clearTimeout(tooltipTimer); clearTimeout(tooltipClose); };
   }, []);
+
+  const href = `https://wa.me/${whatsapp}?text=${encodeURIComponent("Olá! Gostaria de solicitar um orçamento para meu condomínio.")}`;
 
   return (
     <AnimatePresence>
@@ -50,7 +59,7 @@ export default function WhatsAppButton() {
 
           {/* Button */}
           <a
-            href="https://wa.me/556292440750?text=Olá! Gostaria de solicitar um orçamento para meu condomínio."
+            href={href}
             target="_blank"
             rel="noopener noreferrer"
             className="whatsapp-btn w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg hover:bg-[#20BA5A] hover:scale-110 transition-all duration-300"

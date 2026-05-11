@@ -69,6 +69,7 @@ export default function Gallery() {
                 src={img.src}
                 alt={img.alt}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                style={{ objectPosition: img.object_position || "center" }}
                 loading="lazy"
               />
               {/* Overlay */}

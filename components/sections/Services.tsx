@@ -1,66 +1,41 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import {
-  DoorOpen, UserCheck, Shield, Wrench, Sparkles, Waves, Leaf
+  DoorOpen, UserCheck, Shield, Wrench, Sparkles, Waves, Leaf,
+  Building2, Users, Key, Truck, Clock, Zap, Droplets, Star, Package,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { getServices, type Service } from "@/lib/api";
 
-const services = [
-  {
-    icon: DoorOpen,
-    title: "Portaria 24h",
-    description:
-      "Controle rigoroso de acesso, monitoramento de visitantes e registro de ocorrências. Segurança ininterrupta para o seu condomínio.",
-    tag: "Segurança",
-  },
-  {
-    icon: UserCheck,
-    title: "Recepção",
-    description:
-      "Atendimento profissional e cordial na recepção, gerenciando correspondências, encomendas e orientação de visitantes.",
-    tag: "Atendimento",
-  },
-  {
-    icon: Shield,
-    title: "Vigia",
-    description:
-      "Vigilância patrimonial com rondas periódicas, garantindo a integridade e segurança de todas as áreas do condomínio.",
-    tag: "Vigilância",
-  },
-  {
-    icon: Wrench,
-    title: "Zeladoria",
-    description:
-      "Inspeção e manutenção preventiva das instalações, identificando e corrigindo problemas antes que se tornem maiores.",
-    tag: "Manutenção",
-  },
-  {
-    icon: Sparkles,
-    title: "Limpeza e Conservação",
-    description:
-      "Higienização completa das áreas comuns com produtos de qualidade e equipamentos modernos, mantendo ambientes impecáveis.",
-    tag: "Higiene",
-  },
-  {
-    icon: Waves,
-    title: "Limpeza de Piscina",
-    description:
-      "Tratamento completo da água, limpeza de bordas, filtros e equipamentos. Piscina sempre cristalina e segura.",
-    tag: "Aquático",
-  },
-  {
-    icon: Leaf,
-    title: "Manutenção em Jardinagem",
-    description:
-      "Cuidado especializado com jardins, podas, adubação e paisagismo. Áreas verdes sempre bonitas e bem cuidadas.",
-    tag: "Paisagismo",
-  },
+// ─── Icon map ───────────────────────────────────────────────────────────────
+const ICON_MAP: Record<string, LucideIcon> = {
+  DoorOpen, UserCheck, Shield, Wrench, Sparkles, Waves, Leaf,
+  Building2, Users, Key, Truck, Clock, Zap, Droplets, Star, Package,
+};
+
+// ─── Static fallback ────────────────────────────────────────────────────────
+const FALLBACK: Service[] = [
+  { id: "1", icon_name: "DoorOpen",  title: "Portaria 24h",            description: "Controle rigoroso de acesso, monitoramento de visitantes e registro de ocorrências. Segurança ininterrupta para o seu condomínio.", tag: "Segurança",   active: true, display_order: 1 },
+  { id: "2", icon_name: "UserCheck", title: "Recepção",                description: "Atendimento profissional e cordial na recepção, gerenciando correspondências, encomendas e orientação de visitantes.", tag: "Atendimento", active: true, display_order: 2 },
+  { id: "3", icon_name: "Shield",    title: "Vigia",                   description: "Vigilância patrimonial com rondas periódicas, garantindo a integridade e segurança de todas as áreas do condomínio.", tag: "Vigilância",  active: true, display_order: 3 },
+  { id: "4", icon_name: "Wrench",    title: "Zeladoria",               description: "Inspeção e manutenção preventiva das instalações, identificando e corrigindo problemas antes que se tornem maiores.", tag: "Manutenção",  active: true, display_order: 4 },
+  { id: "5", icon_name: "Sparkles",  title: "Limpeza e Conservação",   description: "Higienização completa das áreas comuns com produtos de qualidade e equipamentos modernos, mantendo ambientes impecáveis.", tag: "Higiene",     active: true, display_order: 5 },
+  { id: "6", icon_name: "Waves",     title: "Limpeza de Piscina",      description: "Tratamento completo da água, limpeza de bordas, filtros e equipamentos. Piscina sempre cristalina e segura.", tag: "Aquático",    active: true, display_order: 6 },
+  { id: "7", icon_name: "Leaf",      title: "Manutenção em Jardinagem",description: "Cuidado especializado com jardins, podas, adubação e paisagismo. Áreas verdes sempre bonitas e bem cuidadas.", tag: "Paisagismo",  active: true, display_order: 7 },
 ];
 
 export default function Services() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const [services, setServices] = useState<Service[]>(FALLBACK);
+
+  useEffect(() => {
+    getServices()
+      .then((data) => { if (data.length > 0) setServices(data); })
+      .catch(() => {});
+  }, []);
 
   return (
     <section id="servicos" className="py-20 md:py-28 bg-navy-950 relative overflow-hidden">
@@ -92,16 +67,21 @@ export default function Services() {
         {/* Cards grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, i) => {
-            const Icon = service.icon;
+            const Icon = ICON_MAP[service.icon_name] || Wrench;
             const isLast = i === services.length - 1;
+            const isOdd = services.length % 3 !== 0;
 
             return (
               <motion.div
-                key={service.title}
+                key={service.id}
                 initial={{ opacity: 0, y: 40 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className={`service-card group ${isLast ? "sm:col-span-2 sm:max-w-sm sm:w-full sm:mx-auto lg:max-w-none lg:col-span-1 lg:col-start-2" : ""}`}
+                className={`service-card group ${
+                  isLast && isOdd
+                    ? "sm:col-span-2 sm:max-w-sm sm:w-full sm:mx-auto lg:max-w-none lg:col-span-1 lg:col-start-2"
+                    : ""
+                }`}
               >
                 {/* Tag */}
                 <div className="inline-flex items-center text-gold-500/70 text-xs font-bold tracking-widest uppercase mb-6">

@@ -1,5 +1,10 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Mail, Phone } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { getSettings, getPhonesList, type Settings } from "@/lib/api";
 
 function InstagramIcon({ size = 18, className }: { size?: number; className?: string }) {
   return (
@@ -10,7 +15,6 @@ function InstagramIcon({ size = 18, className }: { size?: number; className?: st
     </svg>
   );
 }
-import Link from "next/link";
 
 const navLinks = [
   { label: "Início", href: "#inicio" },
@@ -22,17 +26,36 @@ const navLinks = [
   { label: "Contato", href: "#contato" },
 ];
 
-const services = [
-  "Portaria 24h",
-  "Recepção",
-  "Vigia",
-  "Zeladoria",
-  "Limpeza e Conservação",
-  "Limpeza de Piscina",
-  "Manutenção em Jardinagem",
-];
+const DEFAULT_SETTINGS: Settings = {
+  phones: ["(62) 9244-0750"],
+  whatsapp: "556292440750",
+  email: "conciergeconservacao@gmail.com",
+  instagram: "conciergeconservacao",
+};
 
 export default function Footer() {
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  const [serviceNames, setServiceNames] = useState<string[]>([
+    "Portaria 24h", "Recepção", "Vigia", "Zeladoria",
+    "Limpeza e Conservação", "Limpeza de Piscina", "Manutenção em Jardinagem",
+  ]);
+
+  useEffect(() => {
+    getSettings().then(setSettings).catch(() => {});
+
+    // Fetch active service names for the footer list
+    fetch(`${(process.env.NEXT_PUBLIC_API_URL || "https://concierge-api.209.50.229.119.sslip.io").replace(/\/$/, "")}/services`)
+      .then((r) => r.json())
+      .then((data: { title: string }[]) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setServiceNames(data.map((s) => s.title));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const phones = getPhonesList(settings);
+
   return (
     <footer className="bg-navy-950 text-white relative overflow-hidden">
       {/* Top gradient line */}
@@ -45,7 +68,6 @@ export default function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            {/* Logo */}
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
                 <Image src="/logo.jpeg" alt="Concierge Brasil" width={40} height={40} className="object-cover w-full h-full" />
@@ -62,7 +84,7 @@ export default function Footer() {
             {/* Social */}
             <div className="flex gap-3">
               <a
-                href="https://www.instagram.com/conciergeconservacao"
+                href={`https://www.instagram.com/${settings.instagram}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-gold-500/10 hover:border-gold-500/30 hover:text-gold-500 transition-all"
@@ -71,14 +93,14 @@ export default function Footer() {
                 <InstagramIcon size={18} />
               </a>
               <a
-                href="mailto:conciergeconservacao@gmail.com"
+                href={`mailto:${settings.email}`}
                 className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-gold-500/10 hover:border-gold-500/30 hover:text-gold-500 transition-all"
                 aria-label="E-mail"
               >
                 <Mail size={18} />
               </a>
               <a
-                href="https://wa.me/556292440750"
+                href={`https://wa.me/${settings.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-gold-500/10 hover:border-gold-500/30 hover:text-gold-500 transition-all"
@@ -111,7 +133,7 @@ export default function Footer() {
           <div>
             <h4 className="font-display text-lg text-white tracking-wide mb-5">SERVIÇOS</h4>
             <ul className="space-y-3">
-              {services.map((s) => (
+              {serviceNames.map((s) => (
                 <li key={s}>
                   <a
                     href="#servicos"
@@ -129,33 +151,40 @@ export default function Footer() {
           <div>
             <h4 className="font-display text-lg text-white tracking-wide mb-5">CONTATO</h4>
             <div className="space-y-4">
+              {/* Email */}
               <div className="flex items-start gap-3">
                 <Mail size={15} className="text-gold-500 mt-1 flex-shrink-0" />
                 <a
-                  href="mailto:conciergeconservacao@gmail.com"
+                  href={`mailto:${settings.email}`}
                   className="text-white/50 text-sm hover:text-gold-500 transition-colors break-all"
                 >
-                  conciergeconservacao@gmail.com
+                  {settings.email}
                 </a>
               </div>
-              <div className="flex items-start gap-3">
-                <Phone size={15} className="text-gold-500 mt-1 flex-shrink-0" />
-                <a
-                  href="https://wa.me/556292440750"
-                  className="text-white/50 text-sm hover:text-gold-500 transition-colors"
-                >
-                  (62) 9244-0750
-                </a>
-              </div>
+              {/* Phones */}
+              {phones.map((phone, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <Phone size={15} className="text-gold-500 mt-1 flex-shrink-0" />
+                  <a
+                    href={i === 0 ? `https://wa.me/${settings.whatsapp}` : `tel:${phone.replace(/\D/g, "")}`}
+                    target={i === 0 ? "_blank" : undefined}
+                    rel={i === 0 ? "noopener noreferrer" : undefined}
+                    className="text-white/50 text-sm hover:text-gold-500 transition-colors"
+                  >
+                    {phone}
+                  </a>
+                </div>
+              ))}
+              {/* Instagram */}
               <div className="flex items-start gap-3">
                 <InstagramIcon size={15} className="text-gold-500 mt-1 flex-shrink-0" />
                 <a
-                  href="https://www.instagram.com/conciergeconservacao"
+                  href={`https://www.instagram.com/${settings.instagram}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white/50 text-sm hover:text-gold-500 transition-colors"
                 >
-                  @conciergeconservacao
+                  @{settings.instagram}
                 </a>
               </div>
               <div className="mt-4 p-3 bg-gold-500/5 border border-gold-500/10 rounded-lg">

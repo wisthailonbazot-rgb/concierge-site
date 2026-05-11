@@ -47,11 +47,19 @@ export async function getMe(): Promise<{ email: string }> {
 
 // ─── Settings ──────────────────────────────────────────────────────────────
 export type Settings = {
-  phone: string;
+  phones?: string[];    // lista de telefones exibidos no site
+  phone?: string;       // legado — mantido para compatibilidade
   whatsapp: string;
   email: string;
   instagram: string;
 };
+
+/** Retorna a lista de telefones para exibição */
+export function getPhonesList(s: Settings): string[] {
+  if (s.phones && s.phones.length > 0) return s.phones;
+  if (s.phone) return [s.phone];
+  return [];
+}
 
 export async function getSettings(): Promise<Settings> {
   return apiFetch("/settings");
@@ -71,6 +79,7 @@ export type GalleryImage = {
   active: boolean;
   display_order: number;
   section?: GallerySection;
+  object_position?: string;   // "center" | "top" | "bottom" | "left" | "right"
   created_at?: string;
 };
 
@@ -98,6 +107,38 @@ export async function updateImage(id: string, data: Partial<GalleryImage>): Prom
 
 export async function deleteImage(id: string): Promise<void> {
   return apiFetch(`/gallery/${id}`, { method: "DELETE" });
+}
+
+// ─── Services ──────────────────────────────────────────────────────────────
+export type Service = {
+  id: string;
+  icon_name: string;
+  title: string;
+  description: string;
+  tag: string;
+  active: boolean;
+  display_order: number;
+  created_at?: string;
+};
+
+export async function getServices(): Promise<Service[]> {
+  return apiFetch("/services");
+}
+
+export async function getServicesAll(): Promise<Service[]> {
+  return apiFetch("/services/all");
+}
+
+export async function createService(data: Partial<Service>): Promise<Service> {
+  return apiFetch("/services", { method: "POST", body: JSON.stringify(data) });
+}
+
+export async function updateService(id: string, data: Partial<Service>): Promise<Service> {
+  return apiFetch(`/services/${id}`, { method: "PUT", body: JSON.stringify(data) });
+}
+
+export async function deleteService(id: string): Promise<void> {
+  return apiFetch(`/services/${id}`, { method: "DELETE" });
 }
 
 // ─── Jobs ──────────────────────────────────────────────────────────────────

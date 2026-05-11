@@ -1,14 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Mail, CheckCircle, Phone, Clock, MessageCircle } from "lucide-react";
-
-// ← Substitua pelo número real (somente dígitos, com DDI 55, ex: "5511999998888")
-const WHATSAPP_NUMBER = "556292440750";
+import { getSettings, getPhonesList, type Settings } from "@/lib/api";
 
 function InstagramIcon({ size = 18, className }: { size?: number; className?: string }) {
   return (
@@ -29,10 +27,26 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+// Valores padrão enquanto a API carrega
+const DEFAULT_SETTINGS: Settings = {
+  phones: ["(62) 9244-0750"],
+  whatsapp: "556292440750",
+  email: "conciergeconservacao@gmail.com",
+  instagram: "conciergeconservacao",
+};
+
 export default function Contact() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const [submitted, setSubmitted] = useState(false);
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+
+  useEffect(() => {
+    getSettings().then(setSettings).catch(() => {});
+  }, []);
+
+  const phones = getPhonesList(settings);
+  const primaryPhone = phones[0] || "(62) 9244-0750";
 
   const {
     register,
@@ -51,7 +65,7 @@ export default function Contact() {
 
 *Mensagem:* ${data.message}`;
 
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank", "noopener,noreferrer");
     setSubmitted(true);
     reset();
@@ -103,55 +117,72 @@ export default function Contact() {
               </p>
             </div>
 
-            {[
-              {
-                icon: Mail,
-                label: "E-mail",
-                value: "conciergeconservacao@gmail.com",
-                href: "mailto:conciergeconservacao@gmail.com",
-              },
-              {
-                icon: Phone,
-                label: "WhatsApp",
-                value: "(62) 9244-0750",
-                href: "https://wa.me/556292440750",
-              },
-              {
-                icon: InstagramIcon,
-                label: "Instagram",
-                value: "@conciergeconservacao",
-                href: "https://www.instagram.com/conciergeconservacao",
-              },
-              {
-                icon: Clock,
-                label: "Atendimento",
-                value: "24h por dia, 7 dias por semana",
-                href: null,
-              },
-            ].map(({ icon: Icon, label, value, href }) => (
-              <div key={label} className="flex items-start gap-4">
-                <div className="w-11 h-11 bg-gold-500/10 border border-gold-500/20 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Icon size={18} className="text-gold-500" />
+            {/* E-mail */}
+            <div className="flex items-start gap-4">
+              <div className="w-11 h-11 bg-gold-500/10 border border-gold-500/20 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Mail size={18} className="text-gold-500" />
+              </div>
+              <div>
+                <div className="text-white/40 text-xs font-semibold tracking-wider uppercase mb-1">E-mail</div>
+                <a href={`mailto:${settings.email}`} className="text-white text-sm hover:text-gold-500 transition-colors">
+                  {settings.email}
+                </a>
+              </div>
+            </div>
+
+            {/* Phones */}
+            <div className="flex items-start gap-4">
+              <div className="w-11 h-11 bg-gold-500/10 border border-gold-500/20 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Phone size={18} className="text-gold-500" />
+              </div>
+              <div>
+                <div className="text-white/40 text-xs font-semibold tracking-wider uppercase mb-1">
+                  {phones.length > 1 ? "Telefones" : "WhatsApp"}
                 </div>
-                <div>
-                  <div className="text-white/40 text-xs font-semibold tracking-wider uppercase mb-1">
-                    {label}
-                  </div>
-                  {href ? (
+                <div className="space-y-0.5">
+                  {phones.map((p, i) => (
                     <a
-                      href={href}
-                      target={href.startsWith("http") ? "_blank" : undefined}
-                      rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-                      className="text-white text-sm hover:text-gold-500 transition-colors"
+                      key={i}
+                      href={i === 0 ? `https://wa.me/${settings.whatsapp}` : `tel:${p.replace(/\D/g, "")}`}
+                      target={i === 0 ? "_blank" : undefined}
+                      rel={i === 0 ? "noopener noreferrer" : undefined}
+                      className="block text-white text-sm hover:text-gold-500 transition-colors"
                     >
-                      {value}
+                      {p}
                     </a>
-                  ) : (
-                    <span className="text-white text-sm">{value}</span>
-                  )}
+                  ))}
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Instagram */}
+            <div className="flex items-start gap-4">
+              <div className="w-11 h-11 bg-gold-500/10 border border-gold-500/20 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                <InstagramIcon size={18} className="text-gold-500" />
+              </div>
+              <div>
+                <div className="text-white/40 text-xs font-semibold tracking-wider uppercase mb-1">Instagram</div>
+                <a
+                  href={`https://www.instagram.com/${settings.instagram}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white text-sm hover:text-gold-500 transition-colors"
+                >
+                  @{settings.instagram}
+                </a>
+              </div>
+            </div>
+
+            {/* Atendimento */}
+            <div className="flex items-start gap-4">
+              <div className="w-11 h-11 bg-gold-500/10 border border-gold-500/20 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Clock size={18} className="text-gold-500" />
+              </div>
+              <div>
+                <div className="text-white/40 text-xs font-semibold tracking-wider uppercase mb-1">Atendimento</div>
+                <span className="text-white text-sm">24h por dia, 7 dias por semana</span>
+              </div>
+            </div>
 
             {/* Trust badge */}
             <div className="mt-8 p-5 bg-gold-500/5 border border-gold-500/15 rounded-xl">
@@ -211,7 +242,7 @@ export default function Contact() {
                       </label>
                       <input
                         {...register("phone")}
-                        placeholder="(62) 9244-0750"
+                        placeholder={primaryPhone}
                         className={inputClass}
                       />
                       {errors.phone && <p className={errorClass}>{errors.phone.message}</p>}
